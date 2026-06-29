@@ -153,6 +153,14 @@ class _AppShellState extends State<AppShell> {
                               path: '/levels',
                               currentPath: currentPath,
                             ),
+                            _sidebarItem(
+                              context,
+                              icon: Icons.flag_outlined,
+                              activeIcon: Icons.flag_rounded,
+                              label: 'Flags',
+                              path: '/flags',
+                              currentPath: currentPath,
+                            ),
                           ],
                         ),
                       ),
@@ -573,6 +581,7 @@ class _AppShellState extends State<AppShell> {
               _navItem(context, Icons.history_toggle_off_outlined, Icons.history_toggle_off_rounded, 'History', '/history', currentPath),
               _navItem(context, Icons.person_outline_rounded, Icons.person_rounded, 'Profile', '/profile', currentPath),
               _navItem(context, Icons.star_outline_rounded, Icons.star_rounded, 'Levels', '/levels', currentPath),
+              _navItem(context, Icons.flag_outlined, Icons.flag_rounded, 'Flags', '/flags', currentPath),
             ],
           ),
         ),
@@ -589,7 +598,7 @@ class _AppShellState extends State<AppShell> {
     String currentPath,
   ) {
     final isActive = currentPath == path;
-    final activeColor = AppTheme.accent;
+    const activeColor = AppTheme.accent;
     final inactiveColor = _isNight ? Colors.white60 : AppTheme.textSecondary.withValues(alpha: 0.6);
 
     return GestureDetector(

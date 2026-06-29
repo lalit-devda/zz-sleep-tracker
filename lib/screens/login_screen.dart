@@ -270,9 +270,9 @@ class _LoginScreenState extends State<LoginScreen>
       ),
       child: Column(
         children: [
-          Container(
+          const SizedBox(
             height: 110,
-            child: const Center(
+            child: Center(
               child: PlantWidget(
                 stage: 'login',
                 size: 65,

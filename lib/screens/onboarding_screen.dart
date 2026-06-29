@@ -81,13 +81,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     final name = _nameController.text.trim();
     final email = DartStreamManager.connection?.session.email ?? '';
+    final nowTime = DateTime.now();
     final userProfile = UserProfile(
       name: name,
       email: email,
       age: age,
-      totalXp: 0,
+      totalXp: 180,
       level: 1,
-      sessions: [],
+      sessions: [
+        SleepSession(
+          bedTime: nowTime.subtract(const Duration(hours: 14)),
+          wakeTime: nowTime.subtract(const Duration(hours: 6)),
+          hoursSlept: 8.0,
+          xpEarned: 180,
+          quality: 5,
+        ),
+      ],
     );
 
     try {
@@ -244,9 +253,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
       child: Column(
         children: [
-          Container(
+          const SizedBox(
             height: 110,
-            child: const Center(
+            child: Center(
               child: PlantWidget(
                 stage: 'login',
                 size: 65,
@@ -318,7 +327,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             style: GoogleFonts.outfit(color: AppTheme.textPrimary, fontSize: 13.5),
             decoration: InputDecoration(
               hintText: 'e.g. Lalit Devda',
-              hintStyle: GoogleFonts.outfit(color: AppTheme.textSecondary.withOpacity(0.5)),
+              hintStyle: GoogleFonts.outfit(color: AppTheme.textSecondary.withValues(alpha: 0.5)),
               fillColor: const Color(0xFFF1F5F9),
               filled: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

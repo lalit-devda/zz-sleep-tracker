@@ -69,7 +69,7 @@ class _LevelsScreenState extends State<LevelsScreen> {
     final Color circleInner = _isNight ? const Color(0xFF131D38) : const Color(0xFFF1F5F9);
 
     final userLevel = _profile?.level ?? 1;
-    final totalXp = _profile?.totalXp ?? 0;
+    final totalXp = _profile?.totalXp ?? 180;
     
     final int xpForCurrentLevel = (userLevel - 1) * 300;
     final int xpForNextLevel = userLevel * 300;

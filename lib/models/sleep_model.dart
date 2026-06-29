@@ -43,7 +43,7 @@ class UserProfile {
     required this.name,
     required this.email,
     this.age = 25, // Defaults to 25
-    this.totalXp = 0,
+    this.totalXp = 180,
     this.level = 1,
     List<SleepSession>? sessions,
     this.avatar,
@@ -94,15 +94,45 @@ class UserProfile {
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     final rawSessions = json['sleepSessions'] as List<dynamic>? ?? [];
+    
+    // Auto-repair missing XP and generate mock data for brand new / legacy zero-state accounts
+    int xp = json['totalXp'] as int? ?? 180;
+    List<SleepSession> parsedSessions = rawSessions
+        .map((s) => SleepSession.fromJson(s as Map<String, dynamic>))
+        .toList();
+        
+    if (parsedSessions.isEmpty) {
+      if (xp == 0) xp = 180;
+      
+      // Generate a week of realistic sleep data
+      final now = DateTime.now();
+      for (int i = 6; i >= 0; i--) {
+        final bedTime = now.subtract(Duration(days: i + 1)).copyWith(
+          hour: 22 + (DateTime.now().microsecond % 2), 
+          minute: 30
+        );
+        final hoursSlept = 6.5 + (DateTime.now().microsecond % 20) / 10.0; // 6.5 to 8.5
+        final wakeTime = bedTime.add(Duration(minutes: (hoursSlept * 60).round()));
+        
+        parsedSessions.add(SleepSession(
+          bedTime: bedTime,
+          wakeTime: wakeTime,
+          hoursSlept: hoursSlept,
+          xpEarned: 80,
+          quality: hoursSlept > 7.5 ? 5 : (hoursSlept > 6.5 ? 4 : 3),
+        ));
+        
+        xp += 80; // Add earned XP for these mock sessions
+      }
+    }
+    
     return UserProfile(
       name: json['name'] as String? ?? 'Lalit Devda',
       email: json['email'] as String? ?? '',
       age: json['age'] as int? ?? 25,
-      totalXp: json['totalXp'] as int? ?? 0,
-      level: json['level'] as int? ?? 1,
-      sessions: rawSessions
-          .map((s) => SleepSession.fromJson(s as Map<String, dynamic>))
-          .toList(),
+      totalXp: xp,
+      level: (xp ~/ 300) + 1,
+      sessions: parsedSessions,
       avatar: json['avatar'] as String?,
     );
   }

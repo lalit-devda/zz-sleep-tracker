@@ -13,6 +13,7 @@ class ConnectionPlatform {
   ConnectionPlatform(this._connection);
 
   FeatureFlagsWrapper get featureFlags => FeatureFlagsWrapper(_connection);
+  DartStreamPersistenceClient get persistence => _connection.client.persistence;
 }
 
 class FeatureFlagsWrapper {
@@ -21,7 +22,7 @@ class FeatureFlagsWrapper {
 
   Future<List<FeatureFlag>> list() async {
     final list = await _connection.client.platform.listFeatureFlags(_connection.session);
-    return list.map((item) {
+    return list.map<FeatureFlag>((dynamic item) {
       if (item is Map) {
         return FeatureFlag(
           key: item['key'] as String? ?? item['flagKey'] as String? ?? '',
@@ -30,6 +31,33 @@ class FeatureFlagsWrapper {
       }
       return FeatureFlag(key: '', enabled: false);
     }).toList();
+  }
+
+  Future<void> create(String key, bool enabled) async {
+    await _connection.client.platform.createFeatureFlag(
+      _connection.session,
+      flag: {
+        'key': key,
+        'enabled': enabled,
+      },
+    );
+  }
+
+  Future<void> update(String key, bool enabled) async {
+    await _connection.client.platform.updateFeatureFlag(
+      _connection.session,
+      key,
+      updates: {
+        'enabled': enabled,
+      },
+    );
+  }
+
+  Future<void> delete(String key) async {
+    await _connection.client.platform.deleteFeatureFlag(
+      _connection.session,
+      key,
+    );
   }
 }
 
@@ -42,11 +70,8 @@ class FeatureFlag {
 class DartStreamManager {
   static DartStreamConnection? _connection;
   static VoidCallback? onUnauthorized;
-  static UserProfile? _cachedUserProfile;
-
   static DartStreamConnection? get connection => _connection;
-  static UserProfile? get cachedUserProfile => _cachedUserProfile;
-  static set cachedUserProfile(UserProfile? profile) => _cachedUserProfile = profile;
+  static UserProfile? cachedUserProfile;
 
   static set connection(DartStreamConnection? conn) {
     _connection = conn;
@@ -154,7 +179,7 @@ class DartStreamManager {
     await prefs.remove('last_session_hours');
     await prefs.remove('last_session_start_time');
     _connection = null;
-    _cachedUserProfile = null; // Clear cache
+    cachedUserProfile = null; // Clear cache
   }
 
   // clearSession kept as alias for signOut for backward compatibility
@@ -180,7 +205,7 @@ class DartStreamManager {
 
   static Future<void> saveUserData(UserProfile profile) async {
     if (_connection == null) throw StateError('No active DartStream connection');
-    _cachedUserProfile = profile; // Update cache
+    cachedUserProfile = profile; // Update cache
     await wrap(() async {
       // FIXED — explicit envelope, guaranteed correct format
       await _connection!.client.experience.saveCloudSave(
@@ -215,9 +240,32 @@ class DartStreamManager {
         payload = raw;
       }
 
-      if (payload == null) return null;
+      if (payload == null) {
+        // The user has absolutely no save data in the cloud yet.
+        // Let's create a fresh profile (which will auto-fill with mock data) and save it immediately.
+        payload = {
+          'name': _connection!.session.email?.split('@').first ?? 'You',
+          'email': _connection!.session.email ?? '',
+          'age': 25,
+          'totalXp': 180,
+          'sleepSessions': [],
+        };
+      }
+      
       final profile = UserProfile.fromJson(payload);
-      _cachedUserProfile = profile; // Update local cache
+      cachedUserProfile = profile; // Update local cache
+      
+      // Auto-save patch: if the raw payload had no sessions, the fromJson factory just generated 
+      // 7 days of mock data. We must immediately save this to the database so it persists.
+      if ((payload['sleepSessions'] as List?)?.isEmpty ?? true) {
+        // saveUserData cannot be awaited here because we are already inside a wrap() mutex.
+        // We can dispatch it asynchronously.
+        _connection!.client.experience.saveCloudSave(
+          _connection!.session,
+          payload: {'payload': profile.toJson()},
+        );
+      }
+      
       return profile;
     });
   }

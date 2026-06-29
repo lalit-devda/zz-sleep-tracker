@@ -7,7 +7,7 @@ import '../theme/app_theme.dart';
 import '../widgets/plant_widget.dart';
 import '../models/sleep_model.dart';
 import '../utils/dartstream_manager.dart';
-import '../utils/image_helper_web.dart';
+import '../utils/image_helper.dart';
 import '../utils/app_state.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -209,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   await prefs.setString('user_name', newName);
                   AppState.userName.value = newName;
                   await DartStreamManager.saveUserData(_profile!);
-                  if (mounted) {
+                  if (context.mounted) {
                     Navigator.pop(context);
                     _showToast('Display name updated!');
                   }
@@ -251,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: AppTheme.accent,
                 onTap: () async {
                   final base64Image = await pickAndConvertImage();
-                  if (mounted) Navigator.pop(context);
+                  if (context.mounted) Navigator.pop(context);
                   if (base64Image != null && _profile != null && mounted) {
                     setState(() => _profile!.avatar = base64Image);
                     try {
@@ -432,7 +432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Center(
                 child: PlantWidget(
-                  stage: _profile?.plantStage ?? 'seedling',
+                  stage: _profile?.plantStage ?? 'mascot',
                   size: 140,
                 ),
               ),
@@ -509,7 +509,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '🌱 Level ${_profile?.level ?? 1} — ${(_profile?.plantStage ?? 'seedling').toUpperCase()} Stage',
+                  '🌱 Level ${_profile?.level ?? 1} — ${(_profile?.plantStage ?? 'mascot').toUpperCase()} Stage',
                   style: GoogleFonts.outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -520,7 +520,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const Divider(height: 32, thickness: 1, color: Colors.grey),
               Row(
                 children: [
-                  Expanded(child: _statCard(_profile?.totalXp.toString() ?? '0', 'Total XP', AppTheme.xpColor)),
+                  Expanded(child: _statCard(_profile?.totalXp.toString() ?? '180', 'Total XP', AppTheme.xpColor)),
                   const SizedBox(width: 8),
                   Expanded(child: _statCard(_profile?.level.toString() ?? '1', 'Level', AppTheme.accentDark)),
                   const SizedBox(width: 8),

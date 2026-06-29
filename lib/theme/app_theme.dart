@@ -43,14 +43,14 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: Colors.grey.withOpacity(0.04),
+      fillColor: Colors.grey.withValues(alpha: 0.04),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(24),
-        borderSide: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1.5),
+        borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1), width: 1.5),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(24),
-        borderSide: BorderSide(color: Colors.grey.withOpacity(0.1), width: 1.5),
+        borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.1), width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(24),

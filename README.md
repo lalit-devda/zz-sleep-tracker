@@ -16,6 +16,7 @@ graph TD
     B -->|ds-platform| E[Feature Flags]
     B -->|ds-experience| F[Cloud-Save Snapshots]
     B -->|ds-reactive| G[Telemetry Event Logging]
+    B -->|ds-persistence| H[Database & Storage Catalog]
     C -.->|RS256 ID Token| A
 ```
 

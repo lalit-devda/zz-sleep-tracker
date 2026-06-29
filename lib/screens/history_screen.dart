@@ -74,7 +74,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = _user ?? UserProfile(name: 'You', email: '', level: 1, totalXp: 0);
+    final user = _user ?? UserProfile(name: 'You', email: '', level: 1, totalXp: 180);
     final size = MediaQuery.of(context).size;
 
     // 1. Calculate Experience Progress
@@ -130,6 +130,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final textPrimaryColor = isNightSky ? Colors.white : AppTheme.textPrimary;
     final textSecondaryColor = isNightSky ? Colors.white70 : AppTheme.textSecondary;
 
+    final cardBgGradient = isNightSky
+        ? const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF131C31), Color(0xFF0A101D)],
+          )
+        : const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Color(0xFFF8FAFC)],
+          );
+
     // Left Column: Unified Sleep/Experience Card
     final leftColumn = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -137,128 +149,199 @@ class _HistoryScreenState extends State<HistoryScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: cardBg,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: cardBorder, width: 1),
+            gradient: cardBgGradient,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: cardBorder, width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: isNightSky ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.04),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
               )
             ],
           ),
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 1. Digital clock
+              // 1. Weather and Digital clock
               Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
                   children: [
                     SizedBox(
-                      width: 50,
-                      height: 50,
+                      width: 80,
+                      height: 80,
                       child: Lottie.asset(
-                        isNightSky ? 'assets/lottie/clear_night.json' : 'assets/lottie/clear_day.json',
+                        isNightSky ? 'assets/lottie/moon.json' : 'assets/lottie/clear_day.json',
                         fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      timeStr,
-                      style: GoogleFonts.outfit(
-                        fontSize: 56,
-                        fontWeight: FontWeight.w300,
-                        color: textPrimaryColor,
-                        letterSpacing: -1,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12.0, left: 4.0),
-                      child: Text(
-                        amPmStr,
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: textSecondaryColor,
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          timeStr,
+                          style: GoogleFonts.outfit(
+                            fontSize: 64,
+                            fontWeight: FontWeight.w200,
+                            color: textPrimaryColor,
+                            letterSpacing: -2,
+                            height: 1.0,
+                          ),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0, left: 6.0),
+                          child: Text(
+                            amPmStr,
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: AppTheme.accent,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              // 2. Plant Widget
+              const SizedBox(height: 32),
+              // 2. Plant Widget with Spotlight effect
               Center(
-                child: PlantWidget(
-                  stage: user.plantStage,
-                  size: 150,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Spotlight glow
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.accent.withValues(alpha: 0.15),
+                            blurRadius: 40,
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                    PlantWidget(
+                      stage: user.plantStage,
+                      size: 160,
+                    ),
+                  ],
                 ),
               ),
-              const Divider(height: 32, thickness: 1, color: Colors.grey),
+              const SizedBox(height: 32),
+              Divider(height: 1, thickness: 1, color: isNightSky ? Colors.white10 : Colors.black12),
+              const SizedBox(height: 24),
               // 3. Level details
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    levelText,
-                    style: GoogleFonts.outfit(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: textPrimaryColor,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Your Experience',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          color: textSecondaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        levelText,
+                        style: GoogleFonts.outfit(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: textPrimaryColor,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '+ 30XP',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.accentDark,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.xpColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '+ 30XP',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.xpColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        xpText,
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: textSecondaryColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Your Experience',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      color: textSecondaryColor,
+              const SizedBox(height: 16),
+              // Progress Bar
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.accent.withValues(alpha: 0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 2),
                     ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: LinearProgressIndicator(
+                    value: progressValue.clamp(0.0, 1.0),
+                    minHeight: 8,
+                    backgroundColor: isNightSky ? const Color(0xFF1A263F) : const Color(0xFFF1F5F9),
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accent),
                   ),
-                  Text(
-                    xpText,
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: textSecondaryColor,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: LinearProgressIndicator(
-                  value: progressValue.clamp(0.0, 1.0),
-                  minHeight: 6,
-                  backgroundColor: isNightSky ? const Color(0xFF1A263F) : const Color(0xFFEEEEEE),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accent),
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                'TIP : The healthier your sleep, the larger your plants will grow.',
-                style: GoogleFonts.outfit(
-                  fontSize: 10.5,
-                  color: textSecondaryColor,
-                  fontWeight: FontWeight.w300,
+              const SizedBox(height: 20),
+              // Tip Container
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isNightSky ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.lightbulb_outline_rounded, size: 16, color: Colors.amber),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'TIP: The healthier your sleep, the larger your plants will grow.',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          color: textSecondaryColor,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

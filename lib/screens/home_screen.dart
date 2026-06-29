@@ -88,13 +88,22 @@ class _HomeScreenState extends State<HomeScreen> {
     // onUnauthorized is registered globally in main.dart using _router.go('/login')
     // so it works from any screen (home, history, profile, sleep-session)
 
+    final nowTime = DateTime.now();
     _user = DartStreamManager.cachedUserProfile ?? UserProfile(
       name: 'Lalit Devda',
       email: 'lalit@example.com',
       age: 25,
-      totalXp: 0,
+      totalXp: 180,
       level: 1,
-      sessions: [],
+      sessions: [
+        SleepSession(
+          bedTime: nowTime.subtract(const Duration(hours: 14)),
+          wakeTime: nowTime.subtract(const Duration(hours: 6)),
+          hoursSlept: 8.0,
+          xpEarned: 180,
+          quality: 5,
+        ),
+      ],
     );
     _loadOnboardingData();
     _fetchFeatureFlags();
@@ -561,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Duration(seconds: (hours * 3600).round()),
     );
     final int actualWakeupMinutes = wakeNow.hour * 60 + wakeNow.minute;
-    final int targetWakeupMinutes = 390; // 06:30
+    const int targetWakeupMinutes = 390; // 06:30
     final int diffWakeup = _getMinutesDiff(
       actualWakeupMinutes,
       targetWakeupMinutes,
@@ -1226,7 +1235,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 32.0),
                 child: PlantWidget(
-                  stage: _plantGrowthEnabled ? _user.plantStage : 'seedling',
+                  stage: _plantGrowthEnabled ? _user.plantStage : 'mascot',
                   size: 165,
                 ),
               ),
@@ -1279,8 +1288,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isNightSky
-                      ? Colors.white.withOpacity(0.12)
-                      : Colors.white.withOpacity(0.9),
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.white.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isNightSky
@@ -1295,7 +1304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 10.5,
                     fontWeight: FontWeight.w500,
                     color: isNightSky
-                        ? Colors.white.withOpacity(0.8)
+                        ? Colors.white.withValues(alpha: 0.8)
                         : AppTheme.textPrimary,
                   ),
                 ),
@@ -1319,7 +1328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 10.5,
                           fontWeight: FontWeight.w400,
                           color: isNightSky
-                              ? Colors.white.withOpacity(0.8)
+                              ? Colors.white.withValues(alpha: 0.8)
                               : AppTheme.textPrimary,
                         ),
                       ),
@@ -1346,7 +1355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       minHeight: 4,
                       backgroundColor: isNightSky
                           ? Colors.white24
-                          : Colors.grey.withOpacity(0.15),
+                          : Colors.grey.withValues(alpha: 0.15),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         isNightSky ? Colors.white : AppTheme.accent,
                       ),
@@ -1441,7 +1450,7 @@ class _HomeScreenState extends State<HomeScreen> {
         btnColor = const Color(0xFF10B981);
       }
     } else {
-      final int targetWakeupMinutes = 390; // 06:30 AM
+      const int targetWakeupMinutes = 390; // 06:30 AM
       final int actualWakeupMinutes =
           _effectiveTime.hour * 60 + _effectiveTime.minute;
       final int diffWakeup = _getMinutesDiff(
@@ -1574,7 +1583,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: _isSleeping
                     ? (btnColor == const Color(0xFF10B981)
                           ? Colors.white
-                          : btnColor.withOpacity(0.1))
+                          : btnColor.withValues(alpha: 0.1))
                     : btnColor,
                 foregroundColor: _isSleeping
                     ? (btnColor == const Color(0xFF10B981)
@@ -1889,7 +1898,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // 1. Missed Sleep Cycle (Past 6:30 AM and user didn't sleep)
     final int currentMinutes = hour * 60 + minute;
-    final int targetWakeupMinutes = 390; // 06:30 AM
+    const int targetWakeupMinutes = 390; // 06:30 AM
 
     if (!_isSleeping && currentMinutes >= targetWakeupMinutes && hour < 12) {
       if (!_hasTriggeredMissedSleepPenalty) {

@@ -78,7 +78,9 @@ class _SignupScreenState extends State<SignupScreen>
           errMsg = e.body;
         }
       }
+      if (mounted) {
         ToastHelper.showError(context, errMsg);
+      }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -215,9 +217,9 @@ class _SignupScreenState extends State<SignupScreen>
       ),
       child: Column(
         children: [
-          Container(
+          const SizedBox(
             height: 110,
-            child: const Center(
+            child: Center(
               child: PlantWidget(
                 stage: 'login',
                 size: 65,
