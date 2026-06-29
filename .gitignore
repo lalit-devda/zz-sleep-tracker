@@ -1,0 +1,21 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+*.log
+.DS_Store
+.env
+.env.local
+*.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Web secrets — never commit
+dart_defines.sh

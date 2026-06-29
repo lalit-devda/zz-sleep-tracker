@@ -1,0 +1,36 @@
+name: sleep_tracker
+description: A sleep tracker app with gamified plant growth
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.12.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  go_router: ^14.2.0
+  fl_chart: ^0.69.0
+  google_fonts: ^6.2.1
+  lottie: ^3.1.2
+  shared_preferences: ^2.3.2
+  intl: ^0.19.0
+  cupertino_icons: ^1.0.8
+  http: ^1.2.2
+  dartstream_client: ^0.0.1
+  provider: ^6.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/lottie/
