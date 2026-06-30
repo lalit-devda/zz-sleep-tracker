@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "sample-app-lalit-devda",
+    "site": "sample-app-lalit-devdaa",
     "public": "build/web",
     "ignore": [
       "firebase.json",
