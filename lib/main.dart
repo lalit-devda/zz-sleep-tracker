@@ -10,6 +10,7 @@ import 'screens/history_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/levels_screen.dart';
 import 'screens/flags_screen.dart';
+import 'screens/intellitoggle_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/sleep_session_screen.dart';
@@ -85,13 +86,17 @@ final _router = GoRouter(
           path: '/flags',
           pageBuilder: (_, __) => _fadePage(const FlagsScreen()),
         ),
+        GoRoute(
+          path: '/intellitoggle',
+          pageBuilder: (_, __) => _fadePage(const IntelliToggleScreen()),
+        ),
       ],
     ),
   ],
   redirect: (context, state) async {
     final location = state.uri.path;
     final isAuthRoute = location == '/login' || location == '/signup' || location == '/';
-    final isShellRoute = location == '/dashboard' || location == '/history' || location == '/profile' || location == '/levels' || location == '/flags';
+    final isShellRoute = location == '/dashboard' || location == '/history' || location == '/profile' || location == '/levels' || location == '/flags' || location == '/intellitoggle';
 
     // Fast path: logged-in user navigating between shell routes
     if (DartStreamManager.isLoggedIn && isShellRoute) return null;
