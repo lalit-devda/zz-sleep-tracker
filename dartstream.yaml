@@ -1,0 +1,13 @@
+name: sleep_tracker
+type: migrate-flutter-web
+version_channel: stable
+cloud:
+  vendor: local
+auth:
+  provider: firebase
+database:
+  provider: postgres
+cicd:
+  provider: gitlab
+features: []
+extensions: []

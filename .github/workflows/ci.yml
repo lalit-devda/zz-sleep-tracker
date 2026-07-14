@@ -15,6 +15,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.12.2'
+
+      - name: Install DartStream CLI
+        run: |
+          dart pub global activate ds_dartstream 0.0.8
+          echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+      - name: Validate DartStream manifest
+        run: dartstream validate --strict
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:

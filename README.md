@@ -235,6 +235,33 @@ Tests cover:
 
 ---
 
+## 🛠️ DartStream CLI Integration
+
+The project includes a `dartstream.yaml` manifest file at the root to validate project configuration.
+
+### Installation
+
+Install the `ds_dartstream` package containing the `dartstream` CLI globally:
+```bash
+dart pub global activate ds_dartstream 0.0.8
+```
+
+### Authentication
+
+Authenticate the CLI on your machine using your DartStream API token:
+```bash
+dartstream login --token <YOUR_TOKEN> --api-url https://dev-api.dartstream.io
+```
+
+### Validation
+
+Validate the project configuration and generated files:
+```bash
+dartstream validate --strict
+```
+
+---
+
 ## 🔄 CI/CD
 
 GitHub Actions (`.github/workflows/ci.yml`) runs on every push and PR to `main`:
