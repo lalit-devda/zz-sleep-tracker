@@ -95,13 +95,16 @@ class UserProfile {
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     final rawSessions = json['sleepSessions'] as List<dynamic>? ?? [];
     
-    // Auto-repair missing XP and generate mock data for brand new / legacy zero-state accounts
-    int xp = json['totalXp'] as int? ?? 180;
+    // Auto-repair missing XP and generate mock data if demo seeding is explicitly enabled
+    int xp = json['totalXp'] as int? ?? 0;
     List<SleepSession> parsedSessions = rawSessions
         .map((s) => SleepSession.fromJson(s as Map<String, dynamic>))
         .toList();
         
-    if (parsedSessions.isEmpty) {
+    const bool isSeedDemo = bool.fromEnvironment('MARKETING_DEMO_SEED') ||
+        String.fromEnvironment('MARKETING_DEMO_SEED') == 'true';
+        
+    if (parsedSessions.isEmpty && isSeedDemo) {
       if (xp == 0) xp = 180;
       
       // Generate a week of realistic sleep data

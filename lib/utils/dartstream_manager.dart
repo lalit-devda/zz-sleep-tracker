@@ -207,12 +207,9 @@ class DartStreamManager {
     if (_connection == null) throw StateError('No active DartStream connection');
     cachedUserProfile = profile; // Update cache
     await wrap(() async {
-      // FIXED — explicit envelope, guaranteed correct format
       await _connection!.client.experience.saveCloudSave(
         _connection!.session,
-        payload: {
-          'payload': profile.toJson(),
-        },
+        payload: profile.toJson(),
       );
     });
   }
@@ -240,29 +237,28 @@ class DartStreamManager {
         payload = raw;
       }
 
-      if (payload == null) {
-        // The user has absolutely no save data in the cloud yet.
-        // Let's create a fresh profile (which will auto-fill with mock data) and save it immediately.
-        payload = {
-          'name': _connection!.session.email?.split('@').first ?? 'You',
-          'email': _connection!.session.email ?? '',
-          'age': 25,
-          'totalXp': 180,
-          'sleepSessions': [],
-        };
-      }
+      const bool isSeedDemo = bool.fromEnvironment('MARKETING_DEMO_SEED') ||
+          String.fromEnvironment('MARKETING_DEMO_SEED') == 'true';
+
+      payload ??= {
+        'name': _connection!.session.email?.split('@').first ?? 'You',
+        'email': _connection!.session.email ?? '',
+        'age': 25,
+        'totalXp': isSeedDemo ? 180 : 0,
+        'sleepSessions': [],
+      };
       
       final profile = UserProfile.fromJson(payload);
       cachedUserProfile = profile; // Update local cache
       
-      // Auto-save patch: if the raw payload had no sessions, the fromJson factory just generated 
-      // 7 days of mock data. We must immediately save this to the database so it persists.
-      if ((payload['sleepSessions'] as List?)?.isEmpty ?? true) {
+      // Auto-save patch: if the raw payload had no sessions and demo seeding is enabled,
+      // the fromJson factory generated 7 days of mock data. We save this immediately.
+      if (isSeedDemo && ((payload['sleepSessions'] as List?)?.isEmpty ?? true)) {
         // saveUserData cannot be awaited here because we are already inside a wrap() mutex.
         // We can dispatch it asynchronously.
         _connection!.client.experience.saveCloudSave(
           _connection!.session,
-          payload: {'payload': profile.toJson()},
+          payload: profile.toJson(),
         );
       }
       

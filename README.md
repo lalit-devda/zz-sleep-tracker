@@ -16,7 +16,6 @@ graph TD
     B -->|ds-platform| E[Feature Flags]
     B -->|ds-experience| F[Cloud-Save Snapshots]
     B -->|ds-reactive| G[Telemetry Event Logging]
-    B -->|ds-persistence| H[Database & Storage Catalog]
     C -.->|RS256 ID Token| A
 ```
 
@@ -185,8 +184,6 @@ All secrets are injected at **compile time** via `--dart-define`. No `.env` file
 | Key | Required | Description |
 |---|---|---|
 | `FIREBASE_API_KEY` | ✅ Yes | Firebase Web API Key (OAuth2 client_id). Firebase Console → Project Settings → Web API Key |
-| `OAUTH_CLIENT_ID` | ✅ Yes | OAuth2 client_id registered in DartStream Dashboard → OAuth Clients |
-| `OAUTH_CLIENT_SECRET` | ✅ Yes | OAuth2 client_secret from DartStream Dashboard → OAuth Clients |
 
 See `.env.example` for the full key list and instructions.
 
@@ -200,15 +197,11 @@ flutter pub get
 
 # 2. Run on Chrome (supply all required defines)
 flutter run -d chrome --web-port=3000 \
-  --dart-define=FIREBASE_API_KEY=YOUR_KEY \
-  --dart-define=OAUTH_CLIENT_ID=YOUR_CLIENT_ID \
-  --dart-define=OAUTH_CLIENT_SECRET=YOUR_SECRET
+  --dart-define=FIREBASE_API_KEY=YOUR_KEY
 
 # 3. Build production web bundle
 flutter build web \
-  --dart-define=FIREBASE_API_KEY=YOUR_KEY \
-  --dart-define=OAUTH_CLIENT_ID=YOUR_CLIENT_ID \
-  --dart-define=OAUTH_CLIENT_SECRET=YOUR_SECRET
+  --dart-define=FIREBASE_API_KEY=YOUR_KEY
 
 # 4. Deploy to Firebase Hosting
 firebase deploy --only hosting:sample-app-lalit-devda

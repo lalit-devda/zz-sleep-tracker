@@ -59,10 +59,9 @@ class _IntelliToggleScreenState extends State<IntelliToggleScreen> {
     }
     _attributes.clear();
 
-    // Initialize default attributes dynamically from the current session
-    _addAttribute('targetingKey', conn?.session.userId ?? '40bc5aa4-78c6-4f2a-901d-26cca84d2be3');
-    _addAttribute('email', conn?.session.email ?? 'ldevda@aortem.io');
-    _addAttribute('tenantId', conn?.session.tenantId ?? '33040763-413a-4f21-914c-7c65da020066');
+    _addAttribute('targetingKey', conn?.session.userId ?? 'user-demo-id');
+    _addAttribute('email', conn?.session.email ?? 'user@example.com');
+    _addAttribute('tenantId', conn?.session.tenantId ?? 'tenant-demo-id');
     _addAttribute('plan', 'premium');
 
     if (_isConnected) {

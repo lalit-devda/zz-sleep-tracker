@@ -36,8 +36,8 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
 
-      - name: Analyze (no fatal infos / warnings)
-        run: flutter analyze --no-fatal-infos
+      - name: Analyze
+        run: flutter analyze
 
       - name: Run unit tests (VM — no Chrome needed for contract tests)
         run: flutter test --reporter=expanded
@@ -45,6 +45,4 @@ jobs:
       - name: Build web (dummy dart-define — never use real secrets in CI env vars)
         run: |
           flutter build web \
-            --dart-define=FIREBASE_API_KEY=CI_DUMMY_KEY \
-            --dart-define=OAUTH_CLIENT_ID=CI_DUMMY_CLIENT_ID \
-            --dart-define=OAUTH_CLIENT_SECRET=CI_DUMMY_SECRET
+            --dart-define=FIREBASE_API_KEY=CI_DUMMY_KEY
